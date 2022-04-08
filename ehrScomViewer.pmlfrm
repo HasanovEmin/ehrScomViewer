@@ -1,0 +1,121 @@
+------------------------------------------------------------------------
+--
+-- 	File:          ehrScomViewer.pmlfrm
+--  Type:          Form Definition
+--  Group:         Graphic View
+--  Keyword:     
+--  Module:        common
+--  Replaces:
+--
+--  Author:        Found in Internet and modified. Author of primary version: Hisar Yevhen(MeHungry)         
+--
+-- Description:
+-- Creates volume view and show scom which is sent from ehrSpecViewer.pmlfrm 
+--
+------------------------------------------------------------------------
+--
+-- Methods defined:
+--
+--  Method call                      Return              Description
+--  ===========                      ======              ===========
+--  ehrScomViewer()                   -                   Constructor
+--  init()                            -                   Initialize action method 
+--  action()                          -                   Main method - creates view
+--  quitcall()                        -                   hide this form
+--
+
+
+
+setup form !!ehrScomViewer dialog dock 
+	!this.Quitcall = '!this.Quitcall()'
+	frame .fra panel anchor all width 50 height 20
+		view .view1 volume width 50 height 20
+		exit
+	exit
+
+	member .scom is DBREF     				$* Stores selected scom
+	member .drawlist is REAL				$* created drawlist's number
+exit
+--------------------------------------------------------------------------------------------------
+--
+-- Method:      ehrScomViewer
+--
+-- Description: Constructor
+--
+-- Method Type: Procedure
+--   [#] [R/RW] [Data Type] 		  [Description]
+-- 
+-- Return:
+--   [Data Type] [Description]
+--   
+--
+--------------------------------------------------------------------------------------------------
+define method .ehrScomViewer()
+endmethod
+
+--------------------------------------------------------------------------------------------------
+--
+-- Method:      Init
+--
+-- Description: Initialize Action. Called from !!ehrSpecViewer every time scom selected from list
+--
+-- Method Type: Procedure
+--   [#] [R/RW] [Data Type] 		  [Description]
+-- 
+-- Return:
+--   [Data Type] [Description]
+--   
+--
+--------------------------------------------------------------------------------------------------
+define method .Init()
+	!this.Action()
+endmethod
+
+--------------------------------------------------------------------------------------------------
+--
+-- Method:      Init
+--
+-- Description: Register view and add scom
+--
+-- Method Type: Procedure
+--   [#] [R/RW] [Data Type] 		  [Description]
+-- 
+-- Return:
+--   [Data Type] [Description]
+--   
+--
+--------------------------------------------------------------------------------------------------
+define method .Action()
+	!item = !!ehrSpecViewer.scom
+	!this.formTitle = '$!item.name'
+	!!gphViews.add(!!ehrScomViewer.view1)
+	!this.drawlist = !!gphDrawlists.createDrawlist()
+	!localDrawlist = !!gphDrawlists.drawlist(!!ehrScomViewer.drawlist)
+	!localDrawlist.add(!item)
+	!!gphDrawlists.attachView(!!ehrScomViewer.drawlist, !!ehrScomViewer.view1)
+	
+	
+	!!ehrScomViewer.view1.shaded = true
+	!!ehrScomViewer.view1.statusline = true
+	!!gphViews.look(!!ehrScomViewer.view1, n35e15d)
+	!!gphViews.limits(!!ehrScomViewer.view1, !item)
+endmethod
+
+--------------------------------------------------------------------------------------------------
+--
+-- Method:      Quitcall
+--
+-- Description: overwrite quit callback
+--
+-- Method Type: Procedure
+--   [#] [R/RW] [Data Type] 		  [Description]
+-- 
+-- Return:
+--   [Data Type] [Description]
+--   
+--
+--------------------------------------------------------------------------------------------------
+define method .Quitcall()
+	!!ehrScomViewer.hide()
+
+endmethod
